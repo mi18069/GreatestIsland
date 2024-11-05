@@ -1,0 +1,3 @@
+Phase 1: Implementing map loading and visualization
+
+1. The biggest problem here was a good visual representation of one cell. I decided to make one standard Tile and add different colors to it in order to represent different heights. In order to do this I made a helper class that uses different gradients depending on height of cell. Since we're using different color palette for various terrains, firstly we choose which gradient should be used, and then function Transform is used for more precise information about color of cell.
