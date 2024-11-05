@@ -10,9 +10,11 @@ public class Game : MonoBehaviour
                                     {600, 70, 0, 0, 100 },
                                     {500, 0, 0, 0, 30 },
                                     {0, 0, 500, 0, 0 },
-                                    {0, 150, 200, 0, 0 }};
+                                    {0, 150, 200, 50, 0 },
+                                    {100, 0, 100, 0, 0 },
+                                    {200, 0, 30, 0, 300 } } ;
 
-    private void Awake()
+private void Awake()
     {
         board = GetComponentInChildren<Board>();
     }
@@ -32,14 +34,14 @@ public class Game : MonoBehaviour
 
     private Map CreateMapFromMatrix(int[,] matrix)
     {
-        int width = matrix.GetLength(0);
-        int height = matrix.GetLength(1);
+        int height = matrix.GetLength(0);
+        int width = matrix.GetLength(1);
 
-        var map = new Map(width, height, 1000);
+        var map = new Map(height, width, 1000);
 
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < height; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < width; y++)
             {
                 var cell = new Cell(x, y, matrix[x, y]);
                 map.AddCellIntoMap(cell);
@@ -52,8 +54,8 @@ public class Game : MonoBehaviour
     private void CenterCameraToMap(Map map)
     {
         var camera = Camera.main;
-        camera.transform.position = new Vector3(map.width / 2f, map.height / 2f, 10f);
-        camera.transform.rotation = Quaternion.Euler(0, 180, 0);
+        camera.transform.position = new Vector3(map.height / 2f, map.width / 2f, -10f);
+        camera.transform.rotation = Quaternion.Euler(0, 0, 90);
     }
 
 }

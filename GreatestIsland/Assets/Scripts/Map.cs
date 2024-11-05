@@ -6,11 +6,11 @@ public class Map
 
     public Cell[,] cellMap { get; private set; }
 
-    public Map(int width, int height, int maxHeightValue)
+    public Map(int height, int width, int maxHeightValue)
     {
-        this.width = width;
         this.height = height;
-        cellMap = new Cell[width, height];
+        this.width = width;
+        cellMap = new Cell[height, width];
         this.maxHeightValue = maxHeightValue;
     }
 
