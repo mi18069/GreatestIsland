@@ -225,6 +225,7 @@ GameObject:
   - component: {fileID: 1024814390}
   - component: {fileID: 1024814389}
   - component: {fileID: 1024814391}
+  - component: {fileID: 1024814392}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -273,6 +274,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6970586234c9d424e8854098936b1836, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1024814392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1024814388}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc407be6bf951d5409bfa1af312cf53c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tile: {fileID: 11400000, guid: d5ba96acf64136347b165992d815d1be, type: 2}
 --- !u!1 &1784249176
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,7 +299,6 @@ GameObject:
   - component: {fileID: 1784249180}
   - component: {fileID: 1784249179}
   - component: {fileID: 1784249181}
-  - component: {fileID: 1784249178}
   m_Layer: 0
   m_Name: CellTilemap
   m_TagString: Untagged
@@ -308,19 +321,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1024814390}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1784249178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1784249176}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc407be6bf951d5409bfa1af312cf53c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tile: {fileID: 11400000, guid: d5ba96acf64136347b165992d815d1be, type: 2}
 --- !u!483693784 &1784249179
 TilemapRenderer:
   m_ObjectHideFlags: 0
@@ -551,6 +551,7 @@ GameObject:
   - component: {fileID: 1942505311}
   - component: {fileID: 1942505313}
   - component: {fileID: 1942505312}
+  - component: {fileID: 1942505314}
   m_Layer: 0
   m_Name: IslandTilemap
   m_TagString: Untagged
@@ -660,6 +661,18 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &1942505314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1942505310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebdae3abd93b434ca933681f3388b69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
