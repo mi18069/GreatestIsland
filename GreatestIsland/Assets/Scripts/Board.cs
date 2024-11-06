@@ -3,17 +3,31 @@ using UnityEngine.Tilemaps;
 
 public class Board : MonoBehaviour
 {
-    public Tilemap tilemap { get; private set; }
+    public Tilemap cellTilemap { get; private set; }
+    public Tilemap islandTilemap { get; private set; }
     public HeightColorGradient heightColorGradient { get; private set; }
+    public IslandColorConverter islandColorConverter { get; private set; }
     public Tile tile;
+
 
     private void Awake()
     {
-        tilemap = GetComponent<Tilemap>();
-        heightColorGradient = GetComponent<HeightColorGradient>();
+        cellTilemap = transform.Find("CellTilemap").GetComponent<Tilemap>();
+        islandTilemap = transform.Find("IslandTilemap").GetComponent<Tilemap>();
+        heightColorGradient = GetComponentInChildren<HeightColorGradient>();
+        islandColorConverter = GetComponentInChildren<IslandColorConverter>();
+
     }
 
     public void Draw(Map map)
+    {
+
+        DrawCells(map);
+        DrawIslands(map);
+
+    }
+
+    private void DrawCells(Map map)
     {
         int width = map.width;
         int height = map.height;
@@ -23,24 +37,44 @@ public class Board : MonoBehaviour
             for (int y = 0; y < width; y++)
             {
                 Cell cell = map.GetCell(x, y);
-                tilemap.SetTile(cell.position, GetTile(cell));
-                tilemap.RefreshTile(cell.position);
+                cellTilemap.SetTile(cell.position, GetCellTile(cell));
+                cellTilemap.RefreshTile(cell.position);
             }
         }
     }
 
-    public void RedrawCell(Map map, Cell cell)
+    private void DrawIslands(Map map)
     {
-        map.AddCellIntoMap(cell);
-        tilemap.SetTile(cell.position, GetTile(cell));
-        tilemap.RefreshTile(cell.position);
+        var islands = map.GetAllIslands();
+        foreach (var island in islands)
+        {
+            RedrawIsland(island);
+        }
     }
 
-    private Tile GetTile(Cell cell)
+    public void RedrawIsland(Island island)
+    {
+        var tile = GetIslandTile(island);
+        foreach (var position in island.GetCellPositions())
+        {
+            islandTilemap.SetTile(position, tile);
+            islandTilemap.RefreshTile(position);
+        }
+    }
+
+    private Tile GetCellTile(Cell cell)
     {
         Color cellColor = heightColorGradient.GetTileColor(cell);
         tile.color = cellColor;
         
+        return tile;
+    }
+
+    private Tile GetIslandTile(Island island)
+    {
+        Color cellColor = islandColorConverter.Convert(island);
+        tile.color = cellColor;
+
         return tile;
     }
 

@@ -1,23 +1,62 @@
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+
 public class Map
 {
     public int width { get; private set; }
-    public int height { get; private set; } 
-    public int maxHeightValue { get; private set; }
+    public int height { get; private set; }
+    public int maxHeightValue { get; private set; } = 1000;
 
     // Structure for cells
     private Cell[,] cellMap { get; set; }
-
-    public Map(int height, int width, int maxHeightValue)
+    private IslandManager islandManager { get; set; }
+    public void CreateMapFromMatrix(int[,] matrix)
     {
-        this.height = height;
-        this.width = width;
+        height = matrix.GetLength(0);
+        width = matrix.GetLength(1);
+
         cellMap = new Cell[height, width];
-        this.maxHeightValue = maxHeightValue;
+
+        for (int x = 0; x < height; x++)
+        {
+            for (int y = 0; y < width; y++)
+            {
+                var cell = new Cell(x, y, matrix[x, y]);
+                AddCellIntoMap(cell);
+            }
+        }
+
+        GenerateIslands();
+    }
+
+    public Island GetCellIsland(Cell cell)
+    {
+        return islandManager.GetIslandById(cell.islandID);
+    }
+
+    public IEnumerable<Island> GetAllIslands()
+    {
+        return islandManager.GetAllIslands();
     }
 
     public void AddCellIntoMap(Cell cell)
     {
         cellMap[cell.position.x, cell.position.y] = cell;
+    }
+
+    public bool CheckIsland(Island island)
+    {
+        if (islandManager.CheckIfIslandHaveGreatestAverageHeight(island))
+        {
+            island.state = Island.State.Found;
+            return true;
+        }
+        else
+        {
+            island.state = Island.State.Missed; 
+            return false;
+        }
     }
 
     public Cell GetCell(int x, int y)
@@ -33,5 +72,12 @@ public class Map
     {
         return (x >= 0 && x < height) && (y >= 0 && y < width);
     }
+
+    // Find different unconnected Islands
+    private void GenerateIslands()
+    {
+        islandManager = new IslandManager(this);
+        islandManager.GenerateIslands();
+    }    
 
 }

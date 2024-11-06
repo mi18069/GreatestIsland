@@ -13,7 +13,9 @@ public class Cell
     public Type type;
     public Vector3Int position;
     public int height;
-    public bool selected = false;
+    // Island manager is the one that changes and uses this variable
+    // Consider other approaches to fix the problem when we need to retrieve the island from selected cell
+    public int islandID = -1;
 
     // Singleton instance of an invalid cell, used for retrieving invalid cell instead of null
     public static readonly Cell InvalidCell = new Cell(Type.Invalid, new Vector3Int(0, 0, 0), 0);

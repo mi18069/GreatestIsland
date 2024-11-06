@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -14,6 +15,10 @@ public class Game : MonoBehaviour
                                     {100, 0, 100, 0, 0 },
                                     {200, 0, 30, 0, 300 } } ;
 
+    private Cell currentCell = Cell.InvalidCell;
+    private Island currentIsland = Island.InvalidIsland;
+
+
     private void Awake()
     {
         board = GetComponentInChildren<Board>();
@@ -26,29 +31,14 @@ public class Game : MonoBehaviour
     private void NewGame()
     {
         var matrix = defaultMatrix;
-        map = CreateMapFromMatrix(matrix);
+        map = new Map();
+        map.CreateMapFromMatrix(matrix);
         CenterCameraToMap(map);
         board.Draw(map);
+
     }
 
-    private Map CreateMapFromMatrix(int[,] matrix)
-    {
-        int height = matrix.GetLength(0);
-        int width = matrix.GetLength(1);
 
-        var map = new Map(height, width, 1000);
-
-        for (int x = 0; x < height; x++)
-        {
-            for (int y = 0; y < width; y++)
-            {
-                var cell = new Cell(x, y, matrix[x, y]);
-                map.AddCellIntoMap(cell);
-            }
-        }
-
-        return map;
-    }
 
     private void CenterCameraToMap(Map map)
     {
@@ -59,25 +49,73 @@ public class Game : MonoBehaviour
 
     private void Update()
     {
+        TrackMouseHovering();
         if (Input.GetMouseButtonDown(0))
         {
             ClickedCell();
         }
     }
 
+    private void TrackMouseHovering()
+    {
+        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3Int cellPosition = board.cellTilemap.WorldToCell(worldPosition);
+        var cell = map.GetCell(cellPosition.x, cellPosition.y);
+        if (currentCell != cell)
+        {
+            HandleChangedCellHover(cell);
+        }
+    }
+
+    private void HandleChangedCellHover(Cell cell)
+    {
+        currentCell = cell;
+        var newIsland = map.GetCellIsland(currentCell);
+
+        if (newIsland.state == Island.State.Missed || newIsland.state == Island.State.Found)
+            return;
+
+        if (currentIsland != newIsland)
+        {
+            if (currentIsland.state == Island.State.Selected)
+            {
+                currentIsland.state = Island.State.Default;
+                board.RedrawIsland(currentIsland);
+            }
+
+            currentIsland = newIsland;
+            
+            if (currentIsland.state != Island.State.Invalid) 
+            {
+                currentIsland.state = Island.State.Selected;
+                board.RedrawIsland(currentIsland);
+            }
+        }
+ 
+
+    }
+
     private void ClickedCell()
     {
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3Int cellPosition = board.tilemap.WorldToCell(worldPosition);
+        Vector3Int cellPosition = board.cellTilemap.WorldToCell(worldPosition);
         Cell cell = map.GetCell(cellPosition.x, cellPosition.y);
 
-        if (cell.type == Cell.Type.Invalid)
+        if (cell.type == Cell.Type.Invalid || cell.type == Cell.Type.Water)
         {
             return;
         }
 
-        Debug.Log($"Clicked cell ({cell.position.x}, {cell.position.y}): {cell.height}");
-        board.RedrawCell(map, cell);
+        Island island = map.GetCellIsland(cell);
+        if (island.state != Island.State.Default && island.state != Island.State.Selected)
+            return;
+
+        if (map.CheckIsland(island))
+            Debug.Log("Greatest island found. Good job!");
+        else
+            Debug.Log("Not the greatest island, try again");
+
+        board.RedrawIsland(island);
     }
 
 
