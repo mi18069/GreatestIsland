@@ -14,7 +14,7 @@ public class Game : MonoBehaviour
                                     {100, 0, 100, 0, 0 },
                                     {200, 0, 30, 0, 300 } } ;
 
-private void Awake()
+    private void Awake()
     {
         board = GetComponentInChildren<Board>();
     }
@@ -23,7 +23,6 @@ private void Awake()
     {
         NewGame();
     }
-
     private void NewGame()
     {
         var matrix = defaultMatrix;
@@ -57,5 +56,29 @@ private void Awake()
         camera.transform.position = new Vector3(map.height / 2f, map.width / 2f, -10f);
         camera.transform.rotation = Quaternion.Euler(0, 0, 90);
     }
+
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            ClickedCell();
+        }
+    }
+
+    private void ClickedCell()
+    {
+        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3Int cellPosition = board.tilemap.WorldToCell(worldPosition);
+        Cell cell = map.GetCell(cellPosition.x, cellPosition.y);
+
+        if (cell.type == Cell.Type.Invalid)
+        {
+            return;
+        }
+
+        Debug.Log($"Clicked cell ({cell.position.x}, {cell.position.y}): {cell.height}");
+        board.RedrawCell(map, cell);
+    }
+
 
 }

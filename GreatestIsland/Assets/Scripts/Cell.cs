@@ -5,6 +5,7 @@ public class Cell
 {
     public enum Type
     {
+        Invalid,
         Water,
         Land
     }
@@ -13,6 +14,9 @@ public class Cell
     public Vector3Int position;
     public int height;
     public bool selected = false;
+
+    // Singleton instance of an invalid cell, used for retrieving invalid cell instead of null
+    public static readonly Cell InvalidCell = new Cell(Type.Invalid, new Vector3Int(0, 0, 0), 0);
 
     public Cell(int x, int y, int height)
     {
@@ -25,5 +29,13 @@ public class Cell
             default:
                 this.type = Type.Land; break;
         }
+    }
+
+    // Private constructor for the invalid cell
+    private Cell(Type type, Vector3Int position, int height)
+    {
+        this.type = type;
+        this.position = position;
+        this.height = height;
     }
 }
