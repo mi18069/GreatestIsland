@@ -4,7 +4,8 @@ public class Map
     public int height { get; private set; } 
     public int maxHeightValue { get; private set; }
 
-    public Cell[,] cellMap { get; private set; }
+    // Structure for cells
+    private Cell[,] cellMap { get; set; }
 
     public Map(int height, int width, int maxHeightValue)
     {
@@ -19,9 +20,18 @@ public class Map
         cellMap[cell.position.x, cell.position.y] = cell;
     }
 
-    public Cell GetCellByCoordinates(int x, int y)
+    public Cell GetCell(int x, int y)
     {
-        return cellMap[x, y];
+        if (IsValidCell(x, y))
+            return cellMap[x, y];
+        else
+            return Cell.InvalidCell;
+    }
+
+    // Returns true if x and y coordinates are within map range
+    private bool IsValidCell(int x, int y)
+    {
+        return (x >= 0 && x < height) && (y >= 0 && y < width);
     }
 
 }

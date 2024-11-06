@@ -22,10 +22,18 @@ public class Board : MonoBehaviour
         {
             for (int y = 0; y < width; y++)
             {
-                Cell cell = map.GetCellByCoordinates(x, y);
+                Cell cell = map.GetCell(x, y);
                 tilemap.SetTile(cell.position, GetTile(cell));
+                tilemap.RefreshTile(cell.position);
             }
         }
+    }
+
+    public void RedrawCell(Map map, Cell cell)
+    {
+        map.AddCellIntoMap(cell);
+        tilemap.SetTile(cell.position, GetTile(cell));
+        tilemap.RefreshTile(cell.position);
     }
 
     private Tile GetTile(Cell cell)
