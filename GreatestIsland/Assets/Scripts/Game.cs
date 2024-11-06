@@ -1,8 +1,4 @@
-using System;
-using System.Linq;
-using System.Net.Http;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class Game : MonoBehaviour
 {
@@ -61,11 +57,9 @@ public class Game : MonoBehaviour
         currentCell = cell;
         var newIsland = map.GetCellIsland(currentCell);
 
-        if (newIsland.state == Island.State.Missed || newIsland.state == Island.State.Found)
-            return;
-
         if (currentIsland != newIsland)
         {
+
             if (currentIsland.state == Island.State.Selected)
             {
                 currentIsland.state = Island.State.Default;
@@ -73,6 +67,9 @@ public class Game : MonoBehaviour
             }
 
             currentIsland = newIsland;
+
+            if (currentIsland.state == Island.State.Missed || currentIsland.state == Island.State.Found)
+                return;
             
             if (currentIsland.state != Island.State.Invalid) 
             {
@@ -87,13 +84,26 @@ public class Game : MonoBehaviour
     private void ClickedCell()
     { 
         Island island = currentIsland;
-        if (island.state != Island.State.Default && island.state != Island.State.Selected)
-            return;
 
-        if (map.CheckIsland(island))
-            Debug.Log("Greatest island found. Good job!");
+        if (island.state == Island.State.Missed)
+        {
+            StartCoroutine(cameraManipulation.Shake(.2f, .3f));
+            return;
+        }
+        else if (island.state != Island.State.Default && island.state != Island.State.Selected)
+            return;
         else
-            Debug.Log("Not the greatest island, try again");
+        {
+            if (map.CheckIsland(island))
+                Debug.Log("Greatest island found. Good job!");
+            else
+            {
+                StartCoroutine(cameraManipulation.Shake(.2f, .3f));
+                Debug.Log("Not the greatest island, try again");
+
+            }
+        }
+
 
         board.RedrawIsland(island);
     }

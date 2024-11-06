@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -36,5 +37,25 @@ public class CameraManipulation : MonoBehaviour
         Vector3 tilemapCenter = tilemap.transform.position + tilemap.cellBounds.center;
         camera.transform.position = new Vector3(tilemapCenter.x, tilemapCenter.y, -10f);
         camera.transform.rotation = Quaternion.Euler(0, 0, 90);
+    }
+
+    public IEnumerator Shake (float duration, float magnitude)
+    {
+        Vector3 originalPos = transform.localPosition;
+
+        float elapsed = 0.0f;
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * magnitude;
+            float y = Random.Range(-1f, 1f) * magnitude;
+
+            transform.localPosition = new Vector3(x, y, originalPos.z);
+
+            elapsed += Time.deltaTime;
+
+            yield return null;
+        }
+
+        transform.localPosition = originalPos;
     }
 }
