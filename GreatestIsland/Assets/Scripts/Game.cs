@@ -10,6 +10,14 @@ public class Game : MonoBehaviour
     private Cell currentCell = Cell.InvalidCell;
     private Island currentIsland = Island.InvalidIsland;
 
+    private int[,] defaultMatrix = {{0, 0, 240, 245, 180 },
+                                    {50, 0, 0, 200, 180 },
+                                    {600, 70, 0, 0, 100 },
+                                    {500, 0, 0, 0, 30 },
+                                    {0, 0, 500, 0, 0 },
+                                    {0, 150, 200, 50, 0 },
+                                    {100, 0, 100, 0, 0 },
+                                    {200, 0, 30, 0, 300 } };
 
     private void Awake()
     {
@@ -24,7 +32,8 @@ public class Game : MonoBehaviour
     }
     private void NewGame()
     {
-        var matrix = client.GetNewMatrix();
+        //var matrix = client.GetNewMatrix();
+        var matrix = defaultMatrix;
         map = new Map();
         map.CreateMapFromMatrix(matrix);
         board.Draw(map);

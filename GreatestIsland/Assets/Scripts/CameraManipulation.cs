@@ -30,13 +30,23 @@ public class CameraManipulation : MonoBehaviour
         camera.orthographicSize = cameraDimensions;
 
         CenterCameraToTilemap(camera, tilemap);
+        RotateCameraRandom(camera);
     }
 
     private void CenterCameraToTilemap(Camera camera, Tilemap tilemap)
     {
         Vector3 tilemapCenter = tilemap.transform.position + tilemap.cellBounds.center;
         camera.transform.position = new Vector3(tilemapCenter.x, tilemapCenter.y, -10f);
-        camera.transform.rotation = Quaternion.Euler(0, 0, 90);
+    }
+
+    // This method create feeling of rotated map
+    // Rotate camera for x * 90 degrees
+    private void RotateCameraRandom(Camera camera)
+    {
+        int rotationSteps = Random.Range(0, 4);
+        int zAxisRotateAngle = rotationSteps * 90;
+        camera.transform.rotation = Quaternion.Euler(0, 0, zAxisRotateAngle);
+
     }
 
     public IEnumerator Shake (float duration, float magnitude)
