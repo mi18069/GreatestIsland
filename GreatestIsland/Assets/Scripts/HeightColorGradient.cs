@@ -10,9 +10,9 @@ public class HeightColorGradient : MonoBehaviour
     private Gradient currentGradient;
     private float currentTreshold;
 
-    float fieldTreshold = 0.2f;
+    float fieldTreshold = 0.25f;
     float hillTreshold = 0.5f;
-    float mountainTreshold = 0.8f;
+    float mountainTreshold = 0.75f;
     float snowyMountainTreshold = 1.0f;
 
     private int maxHeight = 1000;
@@ -20,7 +20,7 @@ public class HeightColorGradient : MonoBehaviour
     public Color GetTileColor(Cell cell)
     {
         if (cell.type == Cell.Type.Water)
-            return new Color(0.251f, 0.920f, 0.929f);
+            return new Color(0.357f, 0.831f, 0.922f);
 
         float normalizedHeight = Mathf.Clamp01(cell.height / (float)maxHeight);
 
