@@ -33,6 +33,7 @@ public class Game : MonoBehaviour
     private string[] missMessages = {"Unlucky", "Almost got it", "Whoopsy daisy", "It happens"};
     private string[] cheekyMessages = { "Nope", "Still no", ":(", "...", "NO", "Try again", "Maybe press harder", "Next time a charm", "Speechless", "Shocked smiley face" };
     private string[] endMessages = { "It'll be better next time!", "Well played!", "Good game" };
+    private string[] inactiveMessages = { "Bit sleepy?", "It's a though one", "Take your time", "Choose carefully", "Are you there?" };
 
     public SceneManagerScript sceneManagerScript;
     public TextMeshProUGUI timer;
@@ -40,6 +41,7 @@ public class Game : MonoBehaviour
     public TextMeshProUGUI textMessages;
 
     private float time = 0;
+    private float inactiveTime = 0;
 
     private void Awake()
     {
@@ -82,6 +84,16 @@ public class Game : MonoBehaviour
         return  $"{(timeInt/60).ToString().PadLeft(2, '0')}:{(timeInt%60).ToString().PadLeft(2, '0')}";
     }
 
+    private void UpdateInactiveTime(float deltaTime)
+    {
+        inactiveTime += deltaTime;
+        if (inactiveTime >= 5)
+        {
+            inactiveTime = 0;
+            UpdateMessage(inactiveMessages);
+        }
+    }
+
     private void NewGame()
     {
         canUserGuess = true;
@@ -100,6 +112,7 @@ public class Game : MonoBehaviour
             return;
 
         time += Time.deltaTime;
+        UpdateInactiveTime(Time.deltaTime);
         UpdateTime(time);
 
         TrackMouseHovering();
@@ -153,6 +166,8 @@ public class Game : MonoBehaviour
     { 
         Island island = currentIsland;
 
+        inactiveTime = 0;
+
         if (island.state == Island.State.Missed)
         {
             StartCoroutine(cameraManipulation.Shake(.2f, .3f));
@@ -162,7 +177,6 @@ public class Game : MonoBehaviour
 
         if (island.state != Island.State.Default && island.state != Island.State.Selected)
             return;
-
 
         bool success = map.CheckIsland(island);
         island.state = success ? Island.State.Found :Island.State.Missed;

@@ -12,11 +12,19 @@ Phase 2: Implementing island mechanics and ui
 
 Phase 3: Implementing get request for gathering valid data
 
+Phase 4: Implementing whole game logic
+
+Phase 5: Adding extra features
+
+1.  Showing average height over each island. Here, the problem was how to know at which point should I place each text with average height. I had a lot of trouble while I learned about prefabs, screen, tile and world positions. At the end, I extracted median cell for each island (sum of coordinates divided by number of cells that each island has). From there I get world coordinates from tilemap. I convert that into screen coordinates that my camera uses. Then I instantiate new prefab with text set to island average height and place it on screen coordinates ( whilst making sure that it is inside canvas so it can be rendered ).
+
 Sensitive places:
 
 Extras:
 1. Mark for selected, missed and guessed islands
 2. Camera shake on missed guess
 3. Levels
-4. Lives, timer and messages in game
-5. Main screen, game screen and end game screen
+4. Lives and timer 
+5. Messages for more pleasant user experiences below board
+6. Main screen, game screen and end game screen
+7. Showing average height when level ends
