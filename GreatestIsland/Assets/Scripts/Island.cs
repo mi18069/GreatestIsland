@@ -20,6 +20,10 @@ public class Island
     public float averageHeight { get { return cells.Sum(c => c.height) / (float)cells.Count(); } }
     public State state;
 
+    // For representing average height at the end of level
+    public Vector3Int MedianCellPosition 
+    => new Vector3Int(cells.Sum(c => c.position.x), cells.Sum(c => c.position.y), 0) / cells.Count();
+
     public Island(int id)
     {
         cells = new List<Cell>();

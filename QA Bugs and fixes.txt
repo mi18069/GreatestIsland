@@ -17,4 +17,6 @@ Sensitive places:
 Extras:
 1. Mark for selected, missed and guessed islands
 2. Camera shake on missed guess
-3. 
+3. Levels
+4. Lives, timer and messages in game
+5. Main screen, game screen and end game screen

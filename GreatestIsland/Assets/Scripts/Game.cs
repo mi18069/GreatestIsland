@@ -62,7 +62,7 @@ public class Game : MonoBehaviour
 
     private void UpdateLives(int numOfLives)
     {
-        livesRemaining.text = $"Lives remaining: {numOfLives}";
+        livesRemaining.text = $"Lives: {numOfLives}";
     }
 
     private void UpdateTime(float time)
@@ -175,6 +175,7 @@ public class Game : MonoBehaviour
             canUserGuess = false;
             UpdateMessage(successMessages);
             UserStats.Instance.IncrementLevelsPassed();
+            board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
             StartCoroutine(ProceedToNextLevelWithDelay(3));
 
         }
@@ -188,6 +189,7 @@ public class Game : MonoBehaviour
                 canUserGuess = false;
                 UpdateMessage(endMessages);
                 UserStats.Instance.SetElapsedTime(Mathf.RoundToInt(time));
+                board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
                 StartCoroutine(ProceedToGameOverScreenWithDelay(3));
             }
             else
