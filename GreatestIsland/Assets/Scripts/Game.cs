@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -22,6 +23,7 @@ public class Game : MonoBehaviour
                                     {200, 0, 30, 0, 300 } };
 
     public SceneManagerScript sceneManagerScript;
+    private Stopwatch stopwatch;
 
     private void Awake()
     {
@@ -29,11 +31,14 @@ public class Game : MonoBehaviour
         client = GetComponent<HttpClient>();
         cameraManipulation = GetComponent<CameraManipulation>();
         sceneManagerScript = GetComponent<SceneManagerScript>();
+        stopwatch = new Stopwatch();
     }
 
     private void Start()
     {
         numOfLives = 3;
+        UserStats.Instance.ResetStats();
+        stopwatch.Start();
         NewGame();
     }
     private void NewGame()
@@ -117,21 +122,24 @@ public class Game : MonoBehaviour
         island.state = success ? Island.State.Found :Island.State.Missed;
         board.RedrawIsland(island);
 
+        UserStats.Instance.IncrementTries();
+
         if (success)
         {
-            Debug.Log("Greatest island found. Good job!");
             canUserGuess = false;
+            UserStats.Instance.IncrementLevelsPassed();
             StartCoroutine(ProceedToNextLevelWithDelay(3));
 
         }
         else
         {
             StartCoroutine(cameraManipulation.Shake(.2f, .3f));
-            Debug.Log("Not the greatest island, try again");
             numOfLives--;
             if (numOfLives <= 0)
             {
                 canUserGuess = false;
+                stopwatch.Stop();
+                UserStats.Instance.SetElapsedTime((int)(stopwatch.ElapsedMilliseconds / 1000));
                 StartCoroutine(ProceedToGameOverScreenWithDelay(3));
             }
         }
