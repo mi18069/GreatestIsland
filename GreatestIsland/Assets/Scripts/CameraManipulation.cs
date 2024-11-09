@@ -37,6 +37,8 @@ public class CameraManipulation : MonoBehaviour
     {
         Vector3 tilemapCenter = tilemap.transform.position + tilemap.cellBounds.center;
         camera.transform.position = new Vector3(tilemapCenter.x, tilemapCenter.y, -10f);
+        camera.transform.rotation = Quaternion.Euler(0, 0, 90);
+
     }
 
     // This method create feeling of rotated map

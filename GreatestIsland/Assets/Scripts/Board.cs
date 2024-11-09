@@ -22,6 +22,8 @@ public class Board : MonoBehaviour
     public void Draw(Map map)
     {
 
+        cellTilemap.ClearAllTiles();
+        islandTilemap.ClearAllTiles();
         DrawCells(map);
         DrawIslands(map);
 
@@ -41,6 +43,7 @@ public class Board : MonoBehaviour
                 cellTilemap.RefreshTile(cell.position);
             }
         }
+
     }
 
     private void DrawIslands(Map map)

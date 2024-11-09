@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -9,7 +10,8 @@ public class Game : MonoBehaviour
 
     private Cell currentCell = Cell.InvalidCell;
     private Island currentIsland = Island.InvalidIsland;
-
+    private int numOfLives;
+    private bool canUserGuess = false;
     private int[,] defaultMatrix = {{0, 0, 240, 245, 180 },
                                     {50, 0, 0, 200, 180 },
                                     {600, 70, 0, 0, 100 },
@@ -28,12 +30,14 @@ public class Game : MonoBehaviour
 
     private void Start()
     {
+        numOfLives = 3;
         NewGame();
     }
     private void NewGame()
     {
-        //var matrix = client.GetNewMatrix();
-        var matrix = defaultMatrix;
+        canUserGuess = true;
+        var matrix = client.GetNewMatrix();
+        //var matrix = defaultMatrix;
         map = new Map();
         map.CreateMapFromMatrix(matrix);
         board.Draw(map);
@@ -43,6 +47,8 @@ public class Game : MonoBehaviour
 
     private void Update()
     {
+        if (!canUserGuess)
+            return;
         TrackMouseHovering();
         if (Input.GetMouseButtonDown(0))
         {
@@ -99,23 +105,47 @@ public class Game : MonoBehaviour
             StartCoroutine(cameraManipulation.Shake(.2f, .3f));
             return;
         }
-        else if (island.state != Island.State.Default && island.state != Island.State.Selected)
+
+        if (island.state != Island.State.Default && island.state != Island.State.Selected)
             return;
+
+
+        bool success = map.CheckIsland(island);
+        island.state = success ? Island.State.Found :Island.State.Missed;
+        board.RedrawIsland(island);
+
+        if (success)
+        {
+            Debug.Log("Greatest island found. Good job!");
+            canUserGuess = false;
+            StartCoroutine(ProceedToNextLevelWithDelay(3));
+        }
         else
         {
-            if (map.CheckIsland(island))
-                Debug.Log("Greatest island found. Good job!");
-            else
+            StartCoroutine(cameraManipulation.Shake(.2f, .3f));
+            Debug.Log("Not the greatest island, try again");
+            numOfLives--;
+            if (numOfLives <= 0)
             {
-                StartCoroutine(cameraManipulation.Shake(.2f, .3f));
-                Debug.Log("Not the greatest island, try again");
-
+                FinishGame();
             }
         }
-
-
-        board.RedrawIsland(island);
+        
     }
 
+    private void FinishGame()
+    {
+        // Shows interface with player stats
+
+    }
+    private IEnumerator ProceedToNextLevelWithDelay(float delaySeconds)
+    {
+        yield return new WaitForSeconds(delaySeconds); // Waits without freezing the main thread
+        NextLevel();
+    }
+    private void NextLevel()
+    {
+        NewGame();
+    }
 
 }

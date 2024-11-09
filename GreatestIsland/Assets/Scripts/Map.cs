@@ -47,16 +47,7 @@ public class Map
 
     public bool CheckIsland(Island island)
     {
-        if (islandManager.CheckIfIslandHaveGreatestAverageHeight(island))
-        {
-            island.state = Island.State.Found;
-            return true;
-        }
-        else
-        {
-            island.state = Island.State.Missed; 
-            return false;
-        }
+        return islandManager.CheckIfIslandHaveGreatestAverageHeight(island);
     }
 
     public Cell GetCell(int x, int y)

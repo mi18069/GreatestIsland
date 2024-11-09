@@ -22,6 +22,9 @@ public class HeightColorGradient : MonoBehaviour
         if (cell.type == Cell.Type.Water)
             return new Color(0.357f, 0.831f, 0.922f);
 
+        if (cell.type == Cell.Type.Invalid)
+            return new Color(0, 0, 0, 1);
+
         float normalizedHeight = Mathf.Clamp01(cell.height / (float)maxHeight);
 
         // Choose gradient based on normalized height
