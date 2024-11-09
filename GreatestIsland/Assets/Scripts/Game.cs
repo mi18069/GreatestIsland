@@ -61,7 +61,7 @@ public class Game : MonoBehaviour
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cellPosition = board.cellTilemap.WorldToCell(worldPosition);
         var cell = map.GetCell(cellPosition.x, cellPosition.y);
-        if (currentCell != cell)
+        if (currentCell.type != cell.type)
         {
             HandleChangedCellHover(cell);
         }
@@ -140,7 +140,7 @@ public class Game : MonoBehaviour
     }
     private IEnumerator ProceedToNextLevelWithDelay(float delaySeconds)
     {
-        yield return new WaitForSeconds(delaySeconds); // Waits without freezing the main thread
+        yield return new WaitForSeconds(delaySeconds);
         NextLevel();
     }
     private void NextLevel()
