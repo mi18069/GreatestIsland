@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Diagnostics;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Game : MonoBehaviour
 {
@@ -11,6 +14,7 @@ public class Game : MonoBehaviour
 
     private Cell currentCell = Cell.InvalidCell;
     private Island currentIsland = Island.InvalidIsland;
+
     private int numOfLives;
     private bool canUserGuess = false;
     private int[,] defaultMatrix = {{0, 0, 240, 245, 180 },
@@ -23,7 +27,10 @@ public class Game : MonoBehaviour
                                     {200, 0, 30, 0, 300 } };
 
     public SceneManagerScript sceneManagerScript;
-    private Stopwatch stopwatch;
+    public TextMeshProUGUI timer;
+    public TextMeshProUGUI livesRemaining;
+
+    public float time = 0;
 
     private void Awake()
     {
@@ -31,16 +38,33 @@ public class Game : MonoBehaviour
         client = GetComponent<HttpClient>();
         cameraManipulation = GetComponent<CameraManipulation>();
         sceneManagerScript = GetComponent<SceneManagerScript>();
-        stopwatch = new Stopwatch();
     }
 
     private void Start()
     {
         numOfLives = 3;
+        UpdateLives(numOfLives);
+        UpdateTime(0);
         UserStats.Instance.ResetStats();
-        stopwatch.Start();
         NewGame();
     }
+
+    private void UpdateLives(int numOfLives)
+    {
+        livesRemaining.text = $"Lives remaining: {numOfLives}";
+    }
+
+    private void UpdateTime(float time)
+    {
+        timer.text = RepresentativeTime(time);
+    }
+
+    private string RepresentativeTime(float time)
+    {
+        int timeInt = Mathf.RoundToInt(time);
+        return  $"{(timeInt/60).ToString().PadLeft(2, '0')}:{(timeInt%60).ToString().PadLeft(2, '0')}";
+    }
+
     private void NewGame()
     {
         canUserGuess = true;
@@ -57,6 +81,10 @@ public class Game : MonoBehaviour
     {
         if (!canUserGuess)
             return;
+
+        time += Time.deltaTime;
+        UpdateTime(time);
+
         TrackMouseHovering();
         if (Input.GetMouseButtonDown(0))
         {
@@ -135,11 +163,12 @@ public class Game : MonoBehaviour
         {
             StartCoroutine(cameraManipulation.Shake(.2f, .3f));
             numOfLives--;
+            UpdateLives(numOfLives);
+
             if (numOfLives <= 0)
             {
                 canUserGuess = false;
-                stopwatch.Stop();
-                UserStats.Instance.SetElapsedTime((int)(stopwatch.ElapsedMilliseconds / 1000));
+                UserStats.Instance.SetElapsedTime(Mathf.RoundToInt(time));
                 StartCoroutine(ProceedToGameOverScreenWithDelay(3));
             }
         }
