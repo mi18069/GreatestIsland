@@ -19,7 +19,6 @@ public class DisplayStats : MonoBehaviour
 
         string statsTextContent = $"Levels Passed: {levelsPassed}\nTime: {time} sec\n\nAccuracy: {accuracy.ToString("F2")}%\nAverage time per level: {averageTimePerLevel} sec\n";
 
-        Debug.Log(statsText);
         if (statsText != null)
             statsText.text = statsTextContent;
 

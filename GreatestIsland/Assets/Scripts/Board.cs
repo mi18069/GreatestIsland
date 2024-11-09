@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,7 +9,7 @@ public class Board : MonoBehaviour
     public HeightColorGradient heightColorGradient { get; private set; }
     public IslandColorConverter islandColorConverter { get; private set; }
     public Tile tile;
-
+    public GameObject borderPrefab;
 
     private void Awake()
     {
@@ -26,7 +27,7 @@ public class Board : MonoBehaviour
         islandTilemap.ClearAllTiles();
         DrawCells(map);
         DrawIslands(map);
-
+        SetBorder();
     }
 
     private void DrawCells(Map map)
@@ -63,6 +64,15 @@ public class Board : MonoBehaviour
             islandTilemap.SetTile(position, tile);
             islandTilemap.RefreshTile(position);
         }
+    }
+
+    void SetBorder()
+    {
+        BoundsInt bounds = cellTilemap.cellBounds;
+        Vector3 borderPosition = cellTilemap.GetComponent<Renderer>().bounds.center;
+
+        borderPrefab.transform.localScale = new Vector3(bounds.size.x + 0.5f, bounds.size.y + 0.5f, 1);
+        borderPrefab.transform.position = borderPosition;
     }
 
     private Tile GetCellTile(Cell cell)
