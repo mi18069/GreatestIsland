@@ -21,11 +21,14 @@ public class Game : MonoBehaviour
                                     {100, 0, 100, 0, 0 },
                                     {200, 0, 30, 0, 300 } };
 
+    public SceneManagerScript sceneManagerScript;
+
     private void Awake()
     {
         board = GetComponentInChildren<Board>();
         client = GetComponent<HttpClient>();
         cameraManipulation = GetComponent<CameraManipulation>();
+        sceneManagerScript = GetComponent<SceneManagerScript>();
     }
 
     private void Start()
@@ -119,6 +122,7 @@ public class Game : MonoBehaviour
             Debug.Log("Greatest island found. Good job!");
             canUserGuess = false;
             StartCoroutine(ProceedToNextLevelWithDelay(3));
+
         }
         else
         {
@@ -127,17 +131,27 @@ public class Game : MonoBehaviour
             numOfLives--;
             if (numOfLives <= 0)
             {
-                FinishGame();
+                canUserGuess = false;
+                StartCoroutine(ProceedToGameOverScreenWithDelay(3));
             }
         }
         
     }
 
-    private void FinishGame()
+
+
+    private IEnumerator ProceedToGameOverScreenWithDelay(float delaySeconds)
     {
-        // Shows interface with player stats
+        yield return new WaitForSeconds(delaySeconds);
+        GameOver();
+    }
+
+    private void GameOver()
+    {
+        sceneManagerScript.LoadScene("GameOverScene");
 
     }
+
     private IEnumerator ProceedToNextLevelWithDelay(float delaySeconds)
     {
         yield return new WaitForSeconds(delaySeconds);
