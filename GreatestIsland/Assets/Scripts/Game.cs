@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -26,11 +27,19 @@ public class Game : MonoBehaviour
                                     {100, 0, 100, 0, 0 },
                                     {200, 0, 30, 0, 300 } };
 
+    private System.Random random;
+    private string[] startingMessages = {"Good luck!", "Watch for details!", "Have fun", "New game - new opportunity", "I'm cheering for you"};
+    private string[] successMessages = {"Good job!", "Nice!", "Wow!", "Well done!", "Excellent"};
+    private string[] missMessages = {"Unlucky", "Almost got it", "Whoopsy daisy", "It happens"};
+    private string[] cheekyMessages = { "Nope", "Still no", ":(", "...", "NO", "Try again", "Maybe press harder", "Next time a charm", "Speechless", "Shocked smiley face" };
+    private string[] endMessages = { "It'll be better next time!", "Well played!", "Good game" };
+
     public SceneManagerScript sceneManagerScript;
     public TextMeshProUGUI timer;
     public TextMeshProUGUI livesRemaining;
+    public TextMeshProUGUI textMessages;
 
-    public float time = 0;
+    private float time = 0;
 
     private void Awake()
     {
@@ -38,6 +47,7 @@ public class Game : MonoBehaviour
         client = GetComponent<HttpClient>();
         cameraManipulation = GetComponent<CameraManipulation>();
         sceneManagerScript = GetComponent<SceneManagerScript>();
+        random = new System.Random();
     }
 
     private void Start()
@@ -45,6 +55,7 @@ public class Game : MonoBehaviour
         numOfLives = 3;
         UpdateLives(numOfLives);
         UpdateTime(0);
+        UpdateMessage(startingMessages);
         UserStats.Instance.ResetStats();
         NewGame();
     }
@@ -57,6 +68,12 @@ public class Game : MonoBehaviour
     private void UpdateTime(float time)
     {
         timer.text = RepresentativeTime(time);
+    }
+
+    private void UpdateMessage(string[] messages)
+    {
+        int numOfMessages = messages.Count();        
+        textMessages.text = messages[random.Next(numOfMessages)];
     }
 
     private string RepresentativeTime(float time)
@@ -139,6 +156,7 @@ public class Game : MonoBehaviour
         if (island.state == Island.State.Missed)
         {
             StartCoroutine(cameraManipulation.Shake(.2f, .3f));
+            UpdateMessage(cheekyMessages);
             return;
         }
 
@@ -155,6 +173,7 @@ public class Game : MonoBehaviour
         if (success)
         {
             canUserGuess = false;
+            UpdateMessage(successMessages);
             UserStats.Instance.IncrementLevelsPassed();
             StartCoroutine(ProceedToNextLevelWithDelay(3));
 
@@ -164,13 +183,18 @@ public class Game : MonoBehaviour
             StartCoroutine(cameraManipulation.Shake(.2f, .3f));
             numOfLives--;
             UpdateLives(numOfLives);
-
             if (numOfLives <= 0)
             {
                 canUserGuess = false;
+                UpdateMessage(endMessages);
                 UserStats.Instance.SetElapsedTime(Mathf.RoundToInt(time));
                 StartCoroutine(ProceedToGameOverScreenWithDelay(3));
             }
+            else
+            {
+                UpdateMessage(missMessages);
+            }
+
         }
         
     }
