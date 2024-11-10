@@ -21,12 +21,13 @@ Phase 5: Adding extra features
 Sensitive places:
 
 Extras:
-1. Mark for selected, missed and guessed islands
-2. Camera shake on missed guess
-3. Levels
-4. Lives and timer 
-5. Messages for more pleasant user experiences below board
-6. Main screen, game screen and end game screen
-7. Showing average height when level ends
-8. Pixelated cursor to match the game
-9. Confirmation window on escape
+1. Map rotating in one of 4 directions after loading
+2. Mark for selected, missed and guessed islands
+3. Camera shake on missed guess
+4. Levels
+5. Lives and timer 
+6. Messages for more pleasant user experiences below board
+7. Main screen, game screen and end game screen
+8. Showing average height when level ends
+9. Pixelated cursor to match the game
+10. Confirmation window on escape

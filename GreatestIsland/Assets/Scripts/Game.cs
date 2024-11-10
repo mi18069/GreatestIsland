@@ -1,10 +1,7 @@
-using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class Game : MonoBehaviour
 {
@@ -18,15 +15,8 @@ public class Game : MonoBehaviour
 
     private int numOfLives;
     private bool canUserGuess = false;
-    private int[,] defaultMatrix = {{0, 0, 240, 245, 180 },
-                                    {50, 0, 0, 200, 180 },
-                                    {600, 70, 0, 0, 100 },
-                                    {500, 0, 0, 0, 30 },
-                                    {0, 0, 500, 0, 0 },
-                                    {0, 150, 200, 50, 0 },
-                                    {100, 0, 100, 0, 0 },
-                                    {200, 0, 30, 0, 300 } };
 
+    #region messages for interaction with user
     private System.Random random;
     private string[] startingMessages = {"Good luck!", "Watch for details!", "Have fun", "New game - new opportunity", "I'm cheering for you"};
     private string[] successMessages = {"Good job!", "Nice!", "Wow!", "Well done!", "Excellent"};
@@ -34,6 +24,7 @@ public class Game : MonoBehaviour
     private string[] cheekyMessages = { "Nope", "Still no", ":(", "...", "NO", "Try again", "Maybe press harder", "Next time a charm", "Speechless", "Shocked smiley face" };
     private string[] endMessages = { "It'll be better next time!", "Well played!", "Good game" };
     private string[] inactiveMessages = { "Bit sleepy?", "It's a though one", "Take your time", "Choose carefully", "Are you there?" };
+    #endregion
 
     public SceneManagerScript sceneManagerScript;
     public TextMeshProUGUI timer;
@@ -44,6 +35,7 @@ public class Game : MonoBehaviour
     private float time = 0;
     private float inactiveTime = 0;
 
+    #region Unity functions
     private void Awake()
     {
         board = GetComponentInChildren<Board>();
@@ -55,57 +47,10 @@ public class Game : MonoBehaviour
 
     private void Start()
     {
-        numOfLives = 3;
-        UpdateLives(numOfLives);
-        UpdateTime(0);
-        UpdateMessage(startingMessages);
-        UserStats.Instance.ResetStats();
+        ResetUserStats();
+        ResetInterfaceValues();
         NewGame();
     }
-
-    private void UpdateLives(int numOfLives)
-    {
-        livesRemaining.text = $"Lives: {numOfLives}";
-    }
-
-    private void UpdateTime(float time)
-    {
-        timer.text = RepresentativeTime(time);
-    }
-
-    private void UpdateMessage(string[] messages)
-    {
-        int numOfMessages = messages.Count();        
-        textMessages.text = messages[random.Next(numOfMessages)];
-    }
-
-    private string RepresentativeTime(float time)
-    {
-        int timeInt = Mathf.RoundToInt(time);
-        return  $"{(timeInt/60).ToString().PadLeft(2, '0')}:{(timeInt%60).ToString().PadLeft(2, '0')}";
-    }
-
-    private void UpdateInactiveTime(float deltaTime)
-    {
-        inactiveTime += deltaTime;
-        if (inactiveTime >= 5)
-        {
-            inactiveTime = 0;
-            UpdateMessage(inactiveMessages);
-        }
-    }
-
-    private void NewGame()
-    {
-        canUserGuess = true;
-        var matrix = client.GetNewMatrix();
-        //var matrix = defaultMatrix;
-        map = new Map();
-        map.CreateMapFromMatrix(matrix);
-        board.Draw(map);
-        cameraManipulation.AdjustCameraToTilemap(Camera.main, board.cellTilemap);
-
-    } 
 
     private void Update()
     {
@@ -117,9 +62,8 @@ public class Game : MonoBehaviour
         if (!canUserGuess)
             return;
 
-        time += Time.deltaTime;
-        UpdateInactiveTime(Time.deltaTime);
-        UpdateTime(time);
+        UpdateTime(Time.deltaTime);
+
 
         TrackMouseHovering();
         if (Input.GetMouseButtonDown(0))
@@ -128,6 +72,59 @@ public class Game : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region UI functions
+    private void ResetInterfaceValues()
+    {
+        UpdateLivesText(numOfLives);
+        UpdateTimeText(0);
+        UpdateMessageText(startingMessages);
+    }
+
+
+    private void UpdateLivesText(int numOfLives)
+    {
+        livesRemaining.text = $"Lives: {numOfLives}";
+    }
+
+    private void UpdateTimeText(float time)
+    {
+        timer.text = GetRepresentativeTime(time);
+    }
+
+    private void UpdateMessageText(string[] messages)
+    {
+        int numOfMessages = messages.Count();        
+        textMessages.text = messages[random.Next(numOfMessages)];
+    }
+
+    private string GetRepresentativeTime(float time)
+    {
+        int timeInt = Mathf.RoundToInt(time);
+        return  $"{(timeInt/60).ToString().PadLeft(2, '0')}:{(timeInt%60).ToString().PadLeft(2, '0')}";
+    }
+
+    private void UpdateInactiveTime(float deltaTime)
+    {
+        inactiveTime += deltaTime;
+        if (inactiveTime >= 5)
+        {
+            inactiveTime = 0;
+            UpdateMessageText(inactiveMessages);
+        }
+    }   
+
+    private void UpdateTime(float deltaTime)
+    {
+        time += deltaTime;
+        UpdateTimeText(time);
+        UpdateInactiveTime(Time.deltaTime);
+    }
+
+    #endregion
+
+    #region User interaction
     private void TrackMouseHovering()
     {
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -174,51 +171,39 @@ public class Game : MonoBehaviour
 
         inactiveTime = 0;
 
+        // User still interacts with environment, but it doesn't count as new attempt
         if (island.state == Island.State.Missed)
         {
             StartCoroutine(cameraManipulation.Shake(.2f, .3f));
-            UpdateMessage(cheekyMessages);
+            UpdateMessageText(cheekyMessages);
             return;
         }
 
+        // Cannot interact 
         if (island.state != Island.State.Default && island.state != Island.State.Selected)
             return;
+
+        // Check guess
+        UserStats.Instance.IncrementTries();
 
         bool success = map.CheckIsland(island);
         island.state = success ? Island.State.Found :Island.State.Missed;
         board.RedrawIsland(island);
 
-        UserStats.Instance.IncrementTries();
-
         if (success)
         {
-            canUserGuess = false;
-            UpdateMessage(successMessages);
-            UserStats.Instance.IncrementLevelsPassed();
-            board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
-            StartCoroutine(ProceedToNextLevelWithDelay(3));
-
+            UserGuessedCorrectly();
         }
         else
         {
-            StartCoroutine(cameraManipulation.Shake(.2f, .3f));
-            numOfLives--;
-            UpdateLives(numOfLives);
-            if (numOfLives <= 0)
-            {
-                canUserGuess = false;
-                UpdateMessage(endMessages);
-                board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
-                StartCoroutine(ProceedToGameOverScreenWithDelay(3));
-            }
-            else
-            {
-                UpdateMessage(missMessages);
-            }
-
+            UserGuessedIncorrectly();
         }
         
     }
+
+    #endregion
+
+    #region Confirmation Window
     private void ShowConfirmationWindow(string message)
     {
         canUserGuess = false;
@@ -247,7 +232,64 @@ public class Game : MonoBehaviour
 
     }
 
+    #endregion
 
+    #region Game workflow
+
+    private void NewGame()
+    {
+        canUserGuess = true;
+        var matrix = client.GetNewMatrix();
+        //var matrix = defaultMatrix;
+        map = new Map();
+        map.CreateMapFromMatrix(matrix);
+        board.Draw(map);
+        cameraManipulation.AdjustCameraToTilemap(Camera.main, board.cellTilemap);
+
+    }
+
+    private void ResetUserStats()
+    {
+        numOfLives = 3;
+        UserStats.Instance.ResetStats();
+    }
+
+    private void UserGuessedCorrectly()
+    {
+        canUserGuess = false;
+        UpdateMessageText(successMessages);
+        UserStats.Instance.IncrementLevelsPassed();
+        board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
+        StartCoroutine(ProceedToNextLevelWithDelay(3));
+    }
+
+    private void UserGuessedIncorrectly()
+    {
+        StartCoroutine(cameraManipulation.Shake(.2f, .3f));
+        numOfLives--;
+        UpdateLivesText(numOfLives);
+        if (numOfLives <= 0)
+        {
+            canUserGuess = false;
+            UpdateMessageText(endMessages);
+            board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
+            StartCoroutine(ProceedToGameOverScreenWithDelay(3));
+        }
+        else
+        {
+            UpdateMessageText(missMessages);
+        }
+    }
+
+    private IEnumerator ProceedToNextLevelWithDelay(float delaySeconds)
+    {
+        yield return new WaitForSeconds(delaySeconds);
+        NextLevel();
+    }
+    private void NextLevel()
+    {
+        NewGame();
+    }
 
     private IEnumerator ProceedToGameOverScreenWithDelay(float delaySeconds)
     {
@@ -262,14 +304,6 @@ public class Game : MonoBehaviour
 
     }
 
-    private IEnumerator ProceedToNextLevelWithDelay(float delaySeconds)
-    {
-        yield return new WaitForSeconds(delaySeconds);
-        NextLevel();
-    }
-    private void NextLevel()
-    {
-        NewGame();
-    }
+    #endregion
 
 }
