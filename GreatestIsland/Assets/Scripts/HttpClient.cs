@@ -6,6 +6,8 @@ using UnityEngine.UIElements;
 public class HttpClient : MonoBehaviour
 {
     private string clientEndpoint = "https://jobfair.nordeus.com/jf24-fullstack-challenge/test";
+    private int minHeight = 0;
+    private int maxHeight = 1000;
 
     public int[,] GetNewMatrix()
     {
@@ -47,7 +49,19 @@ public class HttpClient : MonoBehaviour
             for (int j = 0; j < columnCount; j++)
             {
                 if (int.TryParse(elements[j], out int height))
+                {
+                    if (height < minHeight)
+                        height = minHeight;
+
+                    if (height > maxHeight)
+                        height = maxHeight;
+
                     matrix[i, j] = height;
+                }
+                else
+                {
+                    matrix[i, j] = 0;
+                }
             }
         }
 
