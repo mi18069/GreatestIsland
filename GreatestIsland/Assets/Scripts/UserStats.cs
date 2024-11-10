@@ -27,7 +27,7 @@ public class UserStats
 
     // Because of 3 seconds wait on level end, that should be in calculations
     public int AverageTimePerLevel
-    => NumOfLevelsPassed > 0 ? ElapsedTime / NumOfLevelsPassed : ElapsedTime;
+    => NumOfLevelsPassed > 0 ? (ElapsedTime - 3 * NumOfLevelsPassed) / NumOfLevelsPassed : ElapsedTime;
 
     public float Accuracy
     => NumOfTries > 0 ? (float)NumOfLevelsPassed / NumOfTries : 0.0f;

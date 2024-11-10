@@ -59,11 +59,11 @@ public class Game : MonoBehaviour
             ShowConfirmationWindow("Are you sure you want to finish?");
 
         }
-        if (!canUserGuess)
-            return;
 
         UpdateTime(Time.deltaTime);
 
+        if (!canUserGuess)
+            return;
 
         TrackMouseHovering();
         if (Input.GetMouseButtonDown(0))
@@ -238,13 +238,12 @@ public class Game : MonoBehaviour
 
     private void NewGame()
     {
-        canUserGuess = true;
         var matrix = client.GetNewMatrix();
-        //var matrix = defaultMatrix;
         map = new Map();
         map.CreateMapFromMatrix(matrix);
         board.Draw(map);
         cameraManipulation.AdjustCameraToTilemap(Camera.main, board.cellTilemap);
+        canUserGuess = true;
 
     }
 

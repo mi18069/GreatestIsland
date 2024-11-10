@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class HttpClient : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class HttpClient : MonoBehaviour
                 var endpoint = new Uri(clientEndpoint);
                 var result = client.GetAsync(endpoint).Result; // Since we have .Result we don't need to await 
                 var matrixString = result.Content.ReadAsStringAsync().Result; // Expects response in string representation
-                return ParseMatrixString(matrixString);
+                return !result.IsSuccessStatusCode ? new int[0,0] : ParseMatrixString(matrixString);
             }
             catch (Exception ex)
             {
