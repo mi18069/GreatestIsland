@@ -28,3 +28,5 @@ Extras:
 5. Messages for more pleasant user experiences below board
 6. Main screen, game screen and end game screen
 7. Showing average height when level ends
+8. Pixelated cursor to match the game
+9. Confirmation window on escape

@@ -39,6 +39,7 @@ public class Game : MonoBehaviour
     public TextMeshProUGUI timer;
     public TextMeshProUGUI livesRemaining;
     public TextMeshProUGUI textMessages;
+    [SerializeField] ConfirmationWindow confirmationWindow;
 
     private float time = 0;
     private float inactiveTime = 0;
@@ -108,6 +109,11 @@ public class Game : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown("escape"))
+        {
+            ShowConfirmationWindow();
+
+        }
         if (!canUserGuess)
             return;
 
@@ -202,7 +208,6 @@ public class Game : MonoBehaviour
             {
                 canUserGuess = false;
                 UpdateMessage(endMessages);
-                UserStats.Instance.SetElapsedTime(Mathf.RoundToInt(time));
                 board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
                 StartCoroutine(ProceedToGameOverScreenWithDelay(3));
             }
@@ -213,6 +218,32 @@ public class Game : MonoBehaviour
 
         }
         
+    }
+    private void ShowConfirmationWindow()
+    {
+        canUserGuess = false;
+        confirmationWindow.gameObject.SetActive(true);
+        confirmationWindow.yesButton.onClick.AddListener(YesClicked);
+        confirmationWindow.noButton.onClick.AddListener(NoClicked);
+    }
+
+    private void YesClicked()
+    {
+        canUserGuess = true;
+        confirmationWindow.yesButton.onClick.RemoveListener(YesClicked);
+        confirmationWindow.noButton.onClick.RemoveListener(NoClicked);
+        confirmationWindow.gameObject.SetActive(false);
+        GameOver();
+
+    }
+
+    private void NoClicked()
+    {
+        canUserGuess = true;
+        confirmationWindow.yesButton.onClick.RemoveListener(YesClicked);
+        confirmationWindow.noButton.onClick.RemoveListener(NoClicked);
+        confirmationWindow.gameObject.SetActive(false);
+
     }
 
 
@@ -225,6 +256,7 @@ public class Game : MonoBehaviour
 
     private void GameOver()
     {
+        UserStats.Instance.SetElapsedTime(Mathf.RoundToInt(time));
         sceneManagerScript.LoadScene("GameOverScene");
 
     }
