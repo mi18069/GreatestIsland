@@ -109,9 +109,9 @@ public class Game : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown("escape"))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ShowConfirmationWindow();
+            ShowConfirmationWindow("Are you sure you want to finish?");
 
         }
         if (!canUserGuess)
@@ -219,10 +219,11 @@ public class Game : MonoBehaviour
         }
         
     }
-    private void ShowConfirmationWindow()
+    private void ShowConfirmationWindow(string message)
     {
         canUserGuess = false;
         confirmationWindow.gameObject.SetActive(true);
+        confirmationWindow.messageText.text = message;
         confirmationWindow.yesButton.onClick.AddListener(YesClicked);
         confirmationWindow.noButton.onClick.AddListener(NoClicked);
     }
