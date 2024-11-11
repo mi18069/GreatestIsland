@@ -63,6 +63,14 @@ public class Board : MonoBehaviour
         }
     }
 
+    public void RedrawAllIslands(IEnumerable<Island> islands)
+    {
+        foreach (Island island in islands)
+        {
+            RedrawIsland(island);
+        }
+    }
+
     public void RedrawIsland(Island island)
     {
         var tile = GetIslandTile(island);

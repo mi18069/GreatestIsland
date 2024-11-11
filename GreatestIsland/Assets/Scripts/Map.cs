@@ -50,6 +50,11 @@ public class Map
         return islandManager.CheckIfIslandHaveGreatestAverageHeight(island);
     }
 
+    public IEnumerable<Island> GetTargetIslands()
+    {
+        return islandManager.greatestAverageHeightIsland;
+    }
+
     public Cell GetCell(int x, int y)
     {
         if (IsValidCell(x, y))

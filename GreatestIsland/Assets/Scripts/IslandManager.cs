@@ -8,7 +8,7 @@ public class IslandManager
     private Map map;
 
     // For the case where two or more Islands have the same max average height, we need List, not one instance
-    private List<Island> greatestAverageHeightIsland;
+    public List<Island> greatestAverageHeightIsland { get; private set; }
 
     public IslandManager(Map map)
     {

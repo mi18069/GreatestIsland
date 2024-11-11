@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -271,12 +273,23 @@ public class Game : MonoBehaviour
         {
             canUserGuess = false;
             UpdateMessageText(endMessages);
+            ShowTargetIslands();
             board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
             StartCoroutine(ProceedToGameOverScreenWithDelay(3));
         }
         else
         {
             UpdateMessageText(missMessages);
+        }
+    }
+
+    private void ShowTargetIslands()
+    {
+        var targetIslands = map.GetTargetIslands();
+        foreach (var island in targetIslands)
+        {
+            island.state = Island.State.Found;
+            board.RedrawIsland(island);
         }
     }
 
