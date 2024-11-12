@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -100,7 +98,7 @@ public class Board : MonoBehaviour
         textInstance.tag = "TextPrefab"; // Important because later it will be deleted by this attribute
         TextMeshProUGUI textComponent = textInstance.GetComponent<TextMeshProUGUI>();
 
-        textComponent.transform.position = screenPosition + new Vector3(15, -15, 0);
+        textComponent.transform.position = screenPosition;
         textComponent.text = Mathf.RoundToInt(island.averageHeight).ToString();
 
     }

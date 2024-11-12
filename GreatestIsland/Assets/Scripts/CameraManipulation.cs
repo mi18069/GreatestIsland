@@ -19,7 +19,8 @@ public class CameraManipulation : MonoBehaviour
             cameraDimensions = tilemapSize.x / 2f;
 
         // In order to have distance between map and screen
-        cameraDimensions *= 1.2f;
+        float additionalSize = 140f / Screen.height * cameraDimensions * 2f;
+        cameraDimensions += additionalSize / 2f;
 
         if (cameraDimensions == 0f)
         {

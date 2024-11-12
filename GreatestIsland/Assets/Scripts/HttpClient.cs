@@ -65,16 +65,6 @@ public class HttpClient : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Matrix");
-
-        for (int i=0; i<matrix.GetLength(1); i++)
-        {
-            for (int j=0; j < matrix.GetLength(0); j++)
-            {
-                Debug.Log(matrix[i, j] + " ");
-            }
-            Debug.Log("\n");
-        }
 
         return matrix;
 

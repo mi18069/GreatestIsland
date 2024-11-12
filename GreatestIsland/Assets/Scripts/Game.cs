@@ -110,6 +110,11 @@ public class Game : MonoBehaviour
     { 
         Island island = currentIsland;
 
+        if (island.state == Island.State.Invalid)
+            return;
+
+        gameStats.ResetInactiveTime();
+
         // User still interacts with environment, but it doesn't count as new attempt
         if (island.state == Island.State.Missed)
         {
@@ -122,7 +127,6 @@ public class Game : MonoBehaviour
         if (island.state != Island.State.Default && island.state != Island.State.Selected)
             return;
 
-        gameStats.ResetInactiveTime();
 
         // Check guess
         UserStats.Instance.IncrementTries();
@@ -283,6 +287,8 @@ public class Game : MonoBehaviour
     private void NextLevel()
     {
         NewGame();
+        gameStats.ResetInactiveTime();
+
     }
 
     private IEnumerator ProceedToGameOverScreenWithDelay(float delaySeconds)
