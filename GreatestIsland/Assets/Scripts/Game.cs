@@ -14,11 +14,13 @@ public class Game : MonoBehaviour
 
     private int numOfLives;
     private bool canUserGuess = false;
+    private bool hasGameStarted = false;
 
     public GameStats gameStats;
     public SceneManagerScript sceneManagerScript;
 
     [SerializeField] ConfirmationWindow confirmationWindow;
+    [SerializeField] ConfirmationWindow errorWindow;
 
     private float time = 0;
 
@@ -40,6 +42,9 @@ public class Game : MonoBehaviour
 
     private void Update()
     {
+        if (!hasGameStarted)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             ShowConfirmationWindow("Are you sure you want to finish?");
@@ -145,27 +150,58 @@ public class Game : MonoBehaviour
         canUserGuess = false;
         confirmationWindow.gameObject.SetActive(true);
         confirmationWindow.messageText.text = message;
-        confirmationWindow.yesButton.onClick.AddListener(YesClicked);
-        confirmationWindow.noButton.onClick.AddListener(NoClicked);
+        confirmationWindow.yesButton.onClick.AddListener(ConfirmationYesClicked);
+        confirmationWindow.noButton.onClick.AddListener(ConfirmationNoClicked);
     }
 
-    private void YesClicked()
+    private void ConfirmationYesClicked()
     {
         canUserGuess = true;
-        confirmationWindow.yesButton.onClick.RemoveListener(YesClicked);
-        confirmationWindow.noButton.onClick.RemoveListener(NoClicked);
+        confirmationWindow.yesButton.onClick.RemoveListener(ConfirmationYesClicked);
+        confirmationWindow.noButton.onClick.RemoveListener(ConfirmationNoClicked);
         confirmationWindow.gameObject.SetActive(false);
         GameOver();
 
     }
 
-    private void NoClicked()
+    private void ConfirmationNoClicked()
     {
         canUserGuess = true;
-        confirmationWindow.yesButton.onClick.RemoveListener(YesClicked);
-        confirmationWindow.noButton.onClick.RemoveListener(NoClicked);
+        confirmationWindow.yesButton.onClick.RemoveListener(ConfirmationYesClicked);
+        confirmationWindow.noButton.onClick.RemoveListener(ConfirmationNoClicked);
         confirmationWindow.gameObject.SetActive(false);
 
+    }
+
+    #endregion
+
+    #region Error window
+
+    private void ShowErrorWindow(string message)
+    {
+        canUserGuess = false;
+        errorWindow.gameObject.SetActive(true);
+        errorWindow.messageText.text = message;
+        errorWindow.yesButton.onClick.AddListener(ErrorYesClicked);
+        errorWindow.noButton.onClick.AddListener(ErrorNoClicked);
+    }
+
+    private void ErrorYesClicked()
+    {
+        canUserGuess = true;
+        errorWindow.yesButton.onClick.RemoveListener(ErrorYesClicked);
+        errorWindow.noButton.onClick.RemoveListener(ErrorNoClicked);
+        errorWindow.gameObject.SetActive(false);
+        NewGame();
+    }
+
+    private void ErrorNoClicked()
+    {
+        canUserGuess = true;
+        errorWindow.yesButton.onClick.RemoveListener(ErrorYesClicked);
+        errorWindow.noButton.onClick.RemoveListener(ErrorNoClicked);
+        errorWindow.gameObject.SetActive(false);
+        GameOver();
     }
 
     #endregion
@@ -175,12 +211,17 @@ public class Game : MonoBehaviour
     private void NewGame()
     {
         var matrix = client.GetNewMatrix();
+        if (matrix.Length < 1)
+        {
+            ShowErrorWindow("Map cannot be loaded, try again?");
+            return;
+        }
         map = new Map();
         map.CreateMapFromMatrix(matrix);
         board.Draw(map);
         cameraManipulation.AdjustCameraToTilemap(Camera.main, board.cellTilemap);
         canUserGuess = true;
-
+        hasGameStarted = true;
     }
 
     private void ResetUserStats()
