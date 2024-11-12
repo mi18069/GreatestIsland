@@ -18,6 +18,7 @@ public class HttpClient : MonoBehaviour
                 var endpoint = new Uri(clientEndpoint);
                 var result = client.GetAsync(endpoint).Result; // Since we have .Result we don't need to await 
                 var matrixString = result.Content.ReadAsStringAsync().Result; // Expects response in string representation
+
                 return !result.IsSuccessStatusCode ? new int[0,0] : ParseMatrixString(matrixString);
             }
             catch (Exception ex)
@@ -63,6 +64,16 @@ public class HttpClient : MonoBehaviour
                     matrix[i, j] = 0;
                 }
             }
+        }
+        Debug.Log("Matrix");
+
+        for (int i=0; i<matrix.GetLength(1); i++)
+        {
+            for (int j=0; j < matrix.GetLength(0); j++)
+            {
+                Debug.Log(matrix[i, j] + " ");
+            }
+            Debug.Log("\n");
         }
 
         return matrix;
