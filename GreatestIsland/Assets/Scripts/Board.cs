@@ -12,7 +12,7 @@ public class Board : MonoBehaviour
     public HeightColorGradient heightColorGradient { get; private set; }
     public IslandColorConverter islandColorConverter { get; private set; }
     public Tile tile;
-    public GameObject borderPrefab;
+    public GameObject tilemapBorder;
     public GameObject textPrefab;
     public GameObject canvasForTextPrefab;
 
@@ -31,7 +31,7 @@ public class Board : MonoBehaviour
         cellTilemap.ClearAllTiles();
         islandTilemap.ClearAllTiles();
         HideIslandsAverageHeight();
-
+        tilemapBorder.SetActive(false);
         DrawCells(map);
         DrawIslands(map);
         SetBorder();
@@ -120,8 +120,9 @@ public class Board : MonoBehaviour
         BoundsInt bounds = cellTilemap.cellBounds;
         Vector3 borderPosition = cellTilemap.GetComponent<Renderer>().bounds.center;
 
-        borderPrefab.transform.localScale = new Vector3(bounds.size.x + 0.5f, bounds.size.y + 0.5f, 1);
-        borderPrefab.transform.position = borderPosition;
+        tilemapBorder.SetActive(true);
+        tilemapBorder.transform.localScale = new Vector3(bounds.size.x + 0.5f, bounds.size.y + 0.5f, 1);
+        tilemapBorder.transform.position = borderPosition;
     }
 
     private Tile GetCellTile(Cell cell)

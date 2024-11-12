@@ -210,6 +210,7 @@ public class Game : MonoBehaviour
 
     private void NewGame()
     {
+        hasGameStarted = false;
         var matrix = client.GetNewMatrix();
         if (matrix.Length < 1)
         {
