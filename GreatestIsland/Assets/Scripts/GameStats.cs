@@ -10,6 +10,7 @@ public class GameStats : MonoBehaviour
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI livesRemainingText;
     public TextMeshProUGUI messagesText;
+    public TextMeshProUGUI countdownText;
 
     private float inactiveTime = 0;
 
@@ -43,7 +44,6 @@ public class GameStats : MonoBehaviour
     {
         UpdateLivesText(numOfLives);
         UpdateTimeText(0);
-        UpdateMessageText(MessageType.Start);
     }
 
     public void ResetInactiveTime()
@@ -62,8 +62,14 @@ public class GameStats : MonoBehaviour
         timerText.text = GetRepresentativeTime(time);
     }
 
+    public void UpdateCountdownText(float time)
+    {
+        countdownText.text = Mathf.CeilToInt(time).ToString();
+    }
+
     public void UpdateMessageText(MessageType type)
     {
+        ResetInactiveTime();
         string[] messageArray = messages[type];
         int numOfMessages = messageArray.Count();
         messagesText.text = messageArray[random.Next(numOfMessages)];

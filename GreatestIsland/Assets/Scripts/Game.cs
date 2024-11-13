@@ -32,6 +32,8 @@ public class Game : MonoBehaviour
     [SerializeField] ConfirmationWindow errorWindow;
 
     private float time = 0;
+    private float countdownTime = 10;
+    private float timeRemaining = 10;
 
     #region Unity functions
     private void Awake()
@@ -50,6 +52,9 @@ public class Game : MonoBehaviour
 
     private void Update()
     {
+        UpdateTime(Time.deltaTime);
+
+
         if (!hasGameStarted)
             return;
 
@@ -59,7 +64,6 @@ public class Game : MonoBehaviour
 
         }
 
-        UpdateTime(Time.deltaTime);
 
         if (!canUserGuess)
             return;
@@ -120,8 +124,6 @@ public class Game : MonoBehaviour
 
         if (island.state == Island.State.Invalid)
             return;
-
-        gameStats.ResetInactiveTime();
 
         // User still interacts with environment, but it doesn't count as new attempt
         if (island.state == Island.State.Missed)
@@ -223,6 +225,7 @@ public class Game : MonoBehaviour
     private void NewGame()
     {
         hasGameStarted = false;
+
         var matrix = client.GetNewMatrix();
         if (matrix.Length < 1)
         {
@@ -233,8 +236,18 @@ public class Game : MonoBehaviour
         map.CreateMapFromMatrix(matrix);
         board.Draw(map);
         cameraManipulation.AdjustCameraToTilemap(Camera.main, board.cellTilemap);
+
+        gameStats.UpdateMessageText(GameStats.MessageType.Start);
+        if (selectedMode == GameMode.TimeRush)
+            ResetCountdownTime();
+
         canUserGuess = true;
         hasGameStarted = true;
+    }
+
+    private void ResetCountdownTime()
+    {
+        timeRemaining = countdownTime;
     }
 
     private void ResetUserStats()
@@ -247,11 +260,23 @@ public class Game : MonoBehaviour
     {
         time += deltaTime;
         gameStats.UpdateTime(time, deltaTime);
+
+        if (selectedMode == GameMode.TimeRush && hasGameStarted)
+        {
+            timeRemaining -= deltaTime;
+            timeRemaining = Mathf.Max(timeRemaining, 0);
+            gameStats.UpdateCountdownText(timeRemaining);
+            if (timeRemaining == 0)
+            {
+                UserLost();
+            }
+        }
     }
 
     private void UserGuessedCorrectly()
     {
         canUserGuess = false;
+        hasGameStarted = false;
         gameStats.UpdateMessageText(GameStats.MessageType.Success);
         UserStats.Instance.IncrementLevelsPassed();
         board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
@@ -265,11 +290,7 @@ public class Game : MonoBehaviour
         gameStats.UpdateLivesText(numOfLives);
         if (numOfLives <= 0)
         {
-            canUserGuess = false;
-            gameStats.UpdateMessageText(GameStats.MessageType.End);
-            ShowTargetIslands();
-            board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
-            StartCoroutine(ProceedToGameOverScreenWithDelay(3));
+            UserLost();           
         }
         else
         {
@@ -295,8 +316,16 @@ public class Game : MonoBehaviour
     private void NextLevel()
     {
         NewGame();
-        gameStats.ResetInactiveTime();
+    }
 
+    private void UserLost()
+    {
+        canUserGuess = false;
+        hasGameStarted = false;
+        gameStats.UpdateMessageText(GameStats.MessageType.End);
+        ShowTargetIslands();
+        board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
+        StartCoroutine(ProceedToGameOverScreenWithDelay(3));
     }
 
     private IEnumerator ProceedToGameOverScreenWithDelay(float delaySeconds)
