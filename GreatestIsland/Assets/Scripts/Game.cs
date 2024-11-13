@@ -4,6 +4,15 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
+    public enum GameMode
+    {
+        Normal,
+        Fog,
+        TimeRush
+    }
+
+    public static GameMode selectedMode { get; set; }
+
     private Board board;
     private Map map;
     private HttpClient client;
@@ -30,7 +39,6 @@ public class Game : MonoBehaviour
         board = GetComponentInChildren<Board>();
         client = GetComponent<HttpClient>();
         cameraManipulation = GetComponent<CameraManipulation>();
-        sceneManagerScript = GetComponent<SceneManagerScript>();
     }
 
     private void Start()
