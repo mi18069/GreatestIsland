@@ -157,11 +157,11 @@ public class Board : MonoBehaviour
         GameObject textInstance = Instantiate(textPrefab, screenPosition, Quaternion.identity);
         textInstance.transform.SetParent(canvasForTextPrefab.transform, false);
         textInstance.tag = "TextPrefab"; // Important because later it will be deleted by this attribute
-        TextMeshProUGUI textComponent = textInstance.GetComponent<TextMeshProUGUI>();
+        textInstance.transform.position = screenPosition;
+        textInstance.SetActive(true);
 
-        textComponent.transform.position = screenPosition;
+        TextMeshProUGUI textComponent = textInstance.GetComponentInChildren<TextMeshProUGUI>();
         textComponent.text = Mathf.RoundToInt(island.averageHeight).ToString();
-
     }
 
     private void HideIslandsAverageHeight()
