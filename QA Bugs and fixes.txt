@@ -19,7 +19,7 @@ Phase 5: Adding extra features
 1.  Showing average height over each island. Here, the problem was how to know at which point should I place each text with average height. I had a lot of trouble while I learned about prefabs, screen, tile and world positions. At the end, I extracted median cell for each island (sum of coordinates divided by number of cells that each island has). From there I get world coordinates from tilemap. I convert that into screen coordinates that my camera uses. Then I instantiate new prefab with text set to island average height and place it on screen coordinates ( whilst making sure that it is inside canvas so it can be rendered ).
 
 Overall:
-During the work on this game, I haven't found myself "stuck" in some bug. Of course, it happened all the time, but the problems were relatively easy to overcome. The start was a little bit insecure because I haven't worked on Unity very much, but as soon as I accommodated to this environment - everything was easier.
+During the work on this game, I haven't found myself "stuck" in some bug for a long time. Of course, it happened all the time, but the problems were relatively easy to overcome. The start was a little bit insecure because I haven't worked on Unity very much, but as soon as I accommodated to this environment - everything was easier.
 The biggest problems that I faced was how to make good visual for the game. Color blending was challenging so I decided to embrace the pixels in the game and make it look retro. Those were issues that kept happening every time I introduced some new feature, but no bug was worth mentioning by itself.
 
 How would I test other people's project?
@@ -34,28 +34,13 @@ How would I test other people's project?
 8. Is each island visually distinct from water (case when height values are near 0)
 9. What happens if I click on water or on the already selected island?
 
-Extra features that I added:
-
-1. Map rotating in one of 4 directions after loading
-2. Mark for selected, missed and guessed islands
-3. Camera shake on missed guess
-4. Levels
-5. Lives and timer showing on screen
-6. Messages for more pleasant user experiences at the bottom of the screen
-7. Main screen, game screen and end game screen
-8. Showing average height when level ends
-9. Pixelated cursor to match the game visual effects
-10. Confirmation window for exiting game or finishing level on escape button press
-
 Possible improvements:
 
 1. Setting the game to be in 3d world
 2. Add loading next map in the background while one is showing for getting the possibility to check if that map is the same as previous and to send request for another one
 3. Add window for information about network issues if happens
 4. Add different game modes such as:
-	a) Explorer - Whole screen is dimmed, and only a range of tiles around cursor are visible
 	b) Cloudy - Set clouds at some point so user can see only the top of islands
-	c) Time challenge - Have only a couple of seconds to finish the level
 	d) Mode where islands are wobbly / glitch / blur
 	e) Mode where goal of game is different (find island with greatest area / tallest point ...)
 5. Add multiplayer mode where users can race who will find first the right island
