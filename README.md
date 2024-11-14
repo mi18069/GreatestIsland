@@ -30,10 +30,10 @@ This game was project for Nordeus challenge that can be found on address: https:
 12. Window when error on loading map occurs </br>
     _Do you want to ragequit or try to load map one more time?_ </br>
 </br>
-## 13. Added two more game modes </br>
-    _Master them all_ </br>
-### 1) Fog </br>
-    _Screen is dimmed, and cursor can light up your islands_ </br>
-### 2) Time Rush </br>
-    _You have limited time to find the correct island_ </br>
+
+13. Added two more game modes </br>
+    1) Fog </br>
+        _Screen is dimmed, and cursor can light up your islands_ </br>
+    2) Time Rush </br>
+        _You have limited time to find the correct island_ </br>
     
