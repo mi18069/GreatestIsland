@@ -34,6 +34,7 @@ public class Game : MonoBehaviour
     private float time = 0;
     private float countdownTime = 10;
     private float timeRemaining = 10;
+    private bool freezeCountdown = true;
 
     #region Unity functions
     private void Awake()
@@ -52,11 +53,11 @@ public class Game : MonoBehaviour
 
     private void Update()
     {
-        UpdateTime(Time.deltaTime);
-
 
         if (!hasGameStarted)
             return;
+
+        UpdateTime(Time.deltaTime);
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -249,6 +250,7 @@ public class Game : MonoBehaviour
         if (selectedMode == GameMode.TimeRush)
             ResetCountdownTime();
 
+        freezeCountdown = false;
         canUserGuess = true;
         hasGameStarted = true;
     }
@@ -269,7 +271,7 @@ public class Game : MonoBehaviour
         time += deltaTime;
         gameStats.UpdateTime(time, deltaTime);
 
-        if (selectedMode == GameMode.TimeRush && hasGameStarted)
+        if (selectedMode == GameMode.TimeRush && !freezeCountdown)
         {
             timeRemaining -= deltaTime;
             timeRemaining = Mathf.Max(timeRemaining, 0);
@@ -284,7 +286,7 @@ public class Game : MonoBehaviour
     private void UserGuessedCorrectly()
     {
         canUserGuess = false;
-        hasGameStarted = false;
+        freezeCountdown = true;
         gameStats.UpdateMessageText(GameStats.MessageType.Success);
         UserStats.Instance.IncrementLevelsPassed();
         if (selectedMode == GameMode.Fog)
@@ -332,6 +334,7 @@ public class Game : MonoBehaviour
     {
         canUserGuess = false;
         hasGameStarted = false;
+        freezeCountdown = true;
         gameStats.UpdateMessageText(GameStats.MessageType.End);
         ShowTargetIslands();
         board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
