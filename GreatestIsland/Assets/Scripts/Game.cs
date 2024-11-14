@@ -83,9 +83,12 @@ public class Game : MonoBehaviour
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cellPosition = board.cellTilemap.WorldToCell(worldPosition);
         var cell = map.GetCell(cellPosition.x, cellPosition.y);
-        if (currentCell.type != cell.type)
+        if (currentCell.position != cell.position)
         {
             HandleChangedCellHover(cell);
+
+            if (selectedMode == GameMode.Fog)
+                board.FogCenterCellChanged(cell, map);
         }
     }
 
@@ -111,6 +114,7 @@ public class Game : MonoBehaviour
             if (currentIsland.state != Island.State.Invalid) 
             {
                 currentIsland.state = Island.State.Selected;
+
                 board.RedrawIsland(currentIsland);
             }
         }
@@ -235,6 +239,10 @@ public class Game : MonoBehaviour
         map = new Map();
         map.CreateMapFromMatrix(matrix);
         board.Draw(map);
+
+        if (selectedMode == GameMode.Fog)
+            board.DrawFog(map);
+
         cameraManipulation.AdjustCameraToTilemap(Camera.main, board.cellTilemap);
 
         gameStats.UpdateMessageText(GameStats.MessageType.Start);
@@ -279,6 +287,8 @@ public class Game : MonoBehaviour
         hasGameStarted = false;
         gameStats.UpdateMessageText(GameStats.MessageType.Success);
         UserStats.Instance.IncrementLevelsPassed();
+        if (selectedMode == GameMode.Fog)
+            board.HideFog();
         board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
         StartCoroutine(ProceedToNextLevelWithDelay(3));
     }
@@ -325,6 +335,9 @@ public class Game : MonoBehaviour
         gameStats.UpdateMessageText(GameStats.MessageType.End);
         ShowTargetIslands();
         board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
+
+        if (selectedMode == GameMode.Fog)
+            board.HideFog();
         StartCoroutine(ProceedToGameOverScreenWithDelay(3));
     }
 

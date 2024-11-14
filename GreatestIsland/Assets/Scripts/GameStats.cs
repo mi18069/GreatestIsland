@@ -64,7 +64,7 @@ public class GameStats : MonoBehaviour
 
     public void UpdateCountdownText(float time)
     {
-        countdownText.text = Mathf.CeilToInt(time).ToString();
+        countdownText.text = Mathf.RoundToInt(time).ToString();
     }
 
     public void UpdateMessageText(MessageType type)
