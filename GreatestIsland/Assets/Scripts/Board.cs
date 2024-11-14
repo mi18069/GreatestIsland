@@ -216,8 +216,10 @@ public class Board : MonoBehaviour
         float alpha;
         if (distance <= 7)
             alpha = 0;
+        else if (distance >= 12)
+            alpha = 0.8f;
         else
-            alpha = (distance - 7) * 0.07f;
+            alpha = (distance - 7) * 0.05f;
 
         cellColor.a = alpha;
         tile.color = cellColor;
