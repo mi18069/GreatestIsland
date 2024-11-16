@@ -33,9 +33,9 @@ public class GameStats : MonoBehaviour
     {
         random = new System.Random();
         messages[MessageType.Start] = new string[] { "Good luck!", "Watch for details!", "Have fun", "New game - new opportunity", "I'm cheering for you" };
-        messages[MessageType.Success] = new string[] { "Good job!", "Nice!", "Wow!", "Well done!", "Excellent" };
+        messages[MessageType.Success] = new string[] { "Good job!", "Nice!", "Wow!", "Well done!", "Excellent!" };
         messages[MessageType.Miss] = new string[] { "Unlucky", "Almost got it", "Whoopsy daisy", "It happens" };
-        messages[MessageType.Cheeky] = new string[] { "Nope", "Still no", ":(", "...", "NO", "Try again", "Maybe press harder", "Next time a charm", "Speechless", "Shocked smiley face" };
+        messages[MessageType.Cheeky] = new string[] { "Nope", "Still no", ":(", "...", "NO", "Try again", "Maybe press harder", "Next time's the charm", "Speechless", "Shocked smiley face" };
         messages[MessageType.End] = new string[] { "It'll be better next time!", "Well played!", "Good game" };
         messages[MessageType.Inactive] = new string[] { "Bit sleepy?", "It's a though one", "Take your time", "Choose carefully", "Are you there?" };
     }
@@ -62,9 +62,9 @@ public class GameStats : MonoBehaviour
         timerText.text = GetRepresentativeTime(time);
     }
 
-    public void UpdateCountdownText(float time)
+    public void UpdateCountdownText(int time)
     {
-        countdownText.text = Mathf.RoundToInt(time).ToString();
+        countdownText.text = time.ToString();
     }
 
     public void UpdateMessageText(MessageType type)
