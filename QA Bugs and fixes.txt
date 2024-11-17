@@ -1,26 +1,24 @@
-Process of developing
+Bugs
 
-Phase 1: Implementing map loading and visualization
+1. Cells visuals
+	First problem here was a good visual representation of one cell. I decided to make one standard Tile and add different colors to it in order to represent different heights. In order to do this I made a helper class that uses different gradients depending on height of cell. Since we're using different color palette for various terrains, firstly we choose which gradient should be used, and then function Transform is used for more precise information about color of cell.
 
-1. The biggest problem here was a good visual representation of one cell. I decided to make one standard Tile and add different colors to it in order to represent different heights. In order to do this I made a helper class that uses different gradients depending on height of cell. Since we're using different color palette for various terrains, firstly we choose which gradient should be used, and then function Transform is used for more precise information about color of cell.
+2. Map orientation
+	Another problem that occurred while showing the board is that x and y axis are not following intuition to start at the top-left corner and advance on right-bottom. I considered solution where I'll have method inside my Map that will for passed coordinates x and y return mirror cell that we want to show, but I concluded that this solution will place methods for view in Map class which is only a structure for holding Cell[,] object with some additional informations. Other idea that I implemented was placing and rotating the main camera in order to follow x and y axis intuitional direction. When setting new game, I have method CenterCameraToMap(Map map) that centers camera on the grid ( useful when we have various dimensions of maps) and then rotate it on z-axis by 90 degrees.
 
-2. Another problem that occurred while showing the board is that x and y axis are not following intuition to start at the top-left corner and advance on right-bottom. I considered solution where I'll have method inside my Map that will for passed coordinates x and y return mirror cell that we want to show, but I concluded that this solution will place methods for view in Map class which is only a structure for holding Cell[,] object with some additional informations. Other idea that I implemented was placing and rotating the main camera in order to follow x and y axis intuitional direction. When setting new game, I have method CenterCameraToMap(Map map) that centers camera on the grid ( useful when we have various dimensions of maps) and then rotate it on z-axis by 90 degrees.
+3.  Showing average height over each island 
+	Here, the problem was how to know at which point should I place each text with average height. I had a lot of trouble while I learned about prefabs, screen, tile and world positions. At the end, I extracted median cell for each island (sum of coordinates divided by number of cells that each island has). From there I get world coordinates from tilemap. I convert that into screen coordinates that my camera uses. Then I instantiate new prefab with text set to island average height and place it on screen coordinates ( whilst making sure that it is inside canvas so it can be rendered ).
 
-Phase 2: Implementing island mechanics and ui
+4. Sound management
+	I had my Main Menu scene, and separated from that my scene with volume configuration. In that other scene I load previously saved values for sound and ajust slider for music and sfx effects. The problem that occurred is that I didn't load that scene, so my sound is fixed only when I enter that sound scene. The overcome to this problem was to make one canvas for sound, instead of whole scene. On button click, instead of switching to different scene, I just enabled my canvas which  takes the whole screen.
 
-1. The biggest problem here is separation of concerns in code and ui. I decided that cells shouldn't keep an information if they are clicked, hovered on etc. That information should be kept in Island class. The hardest part here was not the execution ( I haven't found any bug worth mentioning ) but the idea how to solve the problem.
-
-Phase 3: Implementing get request for gathering valid data
-
-Phase 4: Implementing whole game logic
-
-Phase 5: Adding extra features
-
-1.  Showing average height over each island. Here, the problem was how to know at which point should I place each text with average height. I had a lot of trouble while I learned about prefabs, screen, tile and world positions. At the end, I extracted median cell for each island (sum of coordinates divided by number of cells that each island has). From there I get world coordinates from tilemap. I convert that into screen coordinates that my camera uses. Then I instantiate new prefab with text set to island average height and place it on screen coordinates ( whilst making sure that it is inside canvas so it can be rendered ).
+5. Fog clear 
+	Fog mode is realized by having one more instance of tilemap above my original tilemap that represents cells and islands ( In the same way is implemented selection of islands). Thet new tilemap, have it's cells painted gray with alpha coefficient set to 0.8 to allow at least some transparency. Here, the main challenge was to quickly calculate which map cells should have which alpha coefficient. For that, I made a matrix 15x15 that keep an information about +- 7 row an column cells that surround my cell that I have my cursor on, like a Vector3Int, that represent position of one cell. When I place cursor above some cell in map, I recalculate all of this values. Then, as I have position vector, I know which tiles should be affected by new changes. By calculating distance, using Manhattan distance, I can also define how big alpha coefficient of cell should be to make an impression of more cleared fog near my cursor that slowly looses influence as it goes further away from it. Using help with matrix, I don't have to recalculate all tiles from tilemap, but just those 15x15 cells, so the performance won't degrade in case my map gets bigger.
 
 Overall:
 During the work on this game, I haven't found myself "stuck" in some bug for a long time. Of course, it happened all the time, but the problems were relatively easy to overcome. The start was a little bit insecure because I haven't worked on Unity very much, but as soon as I accommodated to this environment - everything was easier.
-The biggest problems that I faced was how to make good visual for the game. Color blending was challenging so I decided to embrace the pixels in the game and make it look retro. Those were issues that kept happening every time I introduced some new feature, but no bug was worth mentioning by itself.
+The biggest problems that I faced was how to make good visuals for the game. Color blending was challenging so I decided to embrace the pixels in the game and make it look retro. 
+
 
 How would I test other people's project?
 
@@ -28,7 +26,7 @@ How would I test other people's project?
 2. What happens to invalid height values or values that are outside specified range?
 3. What happens when response from endpoint doesn't have success status code?
 4. What happens when given matrix doesn't have right dimensions?
-5. Handling situation where more than one island is solution to problem.
+5. Handling situation where more than one island is solution to a problem.
 6. Will map be presented well if given matrix is not rectangle?
 7. How good is scaling for larger matrices?
 8. Is each island visually distinct from water (case when height values are near 0)
@@ -38,11 +36,17 @@ Possible improvements:
 
 1. Setting the game to be in 3d world
 2. Add loading next map in the background while one is showing for getting the possibility to check if that map is the same as previous and to send request for another one
-3. Add window for information about network issues if happens
-4. Add different game modes such as:
-	b) Cloudy - Set clouds at some point so user can see only the top of islands
-	d) Mode where islands are wobbly / glitch / blur
-	e) Mode where goal of game is different (find island with greatest area / tallest point ...)
-5. Add multiplayer mode where users can race who will find first the right island
+3. Add multiplayer mode where users can race who will find first the right island
+4. Adding different images based on cell height that represent grass, forest, mountain etc.
+5. Adding loading screen while getting and rendering new map in order to provide more comfortable user experience
 
-Work in this project was very interesting for me, so don't be surprised if you see some of mentioned improvements in near feature :)
+
+How some factors may affect my solution:
+
+1. If given matrix is not rectangular or isn't 30x30, that shouldn't be a problem, because after loading the map, I position my camera on screen, so it's always on center and always can see the whole map.
+2. Algorithms that I implemented for determining islands (BFS), selecting island (each cell have information about island that it belongs to, and map have information about all cells that one island has) and for calculating fog clear area in map (solved by 15x15 matrix) should scale well with bigger number of cells.
+3. In case I have two or more islands with the same average height, instead of having one correct island, I mark them all as correct, and if user guess only one of them, the game goes to next level.
+4. In case of lost internet connection, I made sure to implement special error window that asks user if it should try to load map again, to proceed to end game screen
+5. In case of slow internet connection, loading map can take a little bit more
+
+Work on this project was very interesting for me, so don't be surprised if you see some of mentioned improvements in near feature :)
