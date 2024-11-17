@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -31,6 +32,8 @@ public class Game : MonoBehaviour
     [SerializeField] ConfirmationWindow confirmationWindow;
     [SerializeField] ConfirmationWindow errorWindow;
 
+    AudioManager audioManager;
+
     private float time = 0;
     private float countdownTime = 10;
     private float timeRemaining = 10;
@@ -42,12 +45,14 @@ public class Game : MonoBehaviour
         board = GetComponentInChildren<Board>();
         client = GetComponent<HttpClient>();
         cameraManipulation = GetComponent<CameraManipulation>();
+        audioManager = AudioManager.instance;
     }
 
     private void Start()
     {
         ResetUserStats();
         gameStats.ResetInterfaceValues(numOfLives);
+        audioManager.PlayBackground(audioManager.backgroundGame);
         NewGame();
     }
 
@@ -135,6 +140,7 @@ public class Game : MonoBehaviour
         {
             StartCoroutine(cameraManipulation.Shake(.2f, .3f));
             gameStats.UpdateMessageText(GameStats.MessageType.Cheeky);
+            audioManager.PlaySFX(audioManager.islandMiss);
             return;
         }
 
@@ -245,6 +251,7 @@ public class Game : MonoBehaviour
             board.DrawFog(map);
 
         cameraManipulation.AdjustCameraToTilemap(Camera.main, board.cellTilemap);
+        audioManager.PlaySFX(audioManager.newGame);
 
         gameStats.UpdateMessageText(GameStats.MessageType.Start);
         if (selectedMode == GameMode.TimeRush)
@@ -273,13 +280,19 @@ public class Game : MonoBehaviour
 
         if (selectedMode == GameMode.TimeRush && !freezeCountdown)
         {
+            int previousInt = Mathf.RoundToInt(timeRemaining);
             timeRemaining -= deltaTime;
-            timeRemaining = Mathf.Max(timeRemaining, 0);
-            gameStats.UpdateCountdownText(timeRemaining);
-            if (timeRemaining == 0)
+            int newInt = Mathf.RoundToInt(timeRemaining);
+            if (previousInt != newInt)
             {
-                UserLost();
+                gameStats.UpdateCountdownText(Math.Max(newInt, 0));
+                audioManager.PlaySFX(audioManager.timeTick);
+                if (timeRemaining <= 0)
+                {
+                    UserLost();
+                }
             }
+
         }
     }
 
@@ -289,6 +302,8 @@ public class Game : MonoBehaviour
         freezeCountdown = true;
         gameStats.UpdateMessageText(GameStats.MessageType.Success);
         UserStats.Instance.IncrementLevelsPassed();
+        audioManager.PlaySFX(audioManager.islandSuccess);
+
         if (selectedMode == GameMode.Fog)
             board.HideFog();
         board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());
@@ -302,10 +317,12 @@ public class Game : MonoBehaviour
         gameStats.UpdateLivesText(numOfLives);
         if (numOfLives <= 0)
         {
+            audioManager.PlaySFX(audioManager.endGame);
             UserLost();           
         }
         else
         {
+            audioManager.PlaySFX(audioManager.islandMiss);
             gameStats.UpdateMessageText(GameStats.MessageType.Miss);
         }
     }
@@ -335,6 +352,7 @@ public class Game : MonoBehaviour
         canUserGuess = false;
         hasGameStarted = false;
         freezeCountdown = true;
+
         gameStats.UpdateMessageText(GameStats.MessageType.End);
         ShowTargetIslands();
         board.ShowIslandsAverageHeight(map.GetAllIslands().ToList());

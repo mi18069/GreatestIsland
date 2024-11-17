@@ -6,7 +6,12 @@ public class DisplayStats : MonoBehaviour
 {
     public TMP_Text statsText;
 
+
     void Start() {
+        if (AudioManager.instance != null)
+        {
+            AudioManager.instance.PlayBackground(AudioManager.instance.backgroundMenu);
+        }
         SetUserStats();
     }
 
