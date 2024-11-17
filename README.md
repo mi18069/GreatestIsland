@@ -30,16 +30,15 @@ This game was project for Nordeus challenge that can be found on address: https:
 12. Window when error on loading map occurs </br>
     _Do you want to ragequit or try to load map one more time?_ </br>
 13. 8bit Background music and SFX </br>
-    _For good vibes_ </br>
+    _Good vibes_ </br>
 14. Sound volume manager </br>
     _Remembers last saved values_ </br>
-    
 </br>
 15. Added two more game modes </br>
     1) Fog </br>
-        _Screen is dimmed, and cursor can light up your islands_ </br>
+        _Screen is dimmed and cursor can light up your islands_ </br>
     2) Time Rush </br>
-        _You have limited time to find the correct island_ </br>
+        _Limited time to find the correct island_ </br>
 
 ## Hope you'll enjoy playing this game! 
     
